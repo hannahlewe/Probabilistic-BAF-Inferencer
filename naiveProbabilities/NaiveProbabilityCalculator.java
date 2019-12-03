@@ -166,7 +166,5 @@ public class JointProbabilityCalculator {
         }
         System.out.println("P(T = 1) = " + t);
 
-        //printTable(assignment_table, joint_probabilities);
-
     } // main
 } // class
