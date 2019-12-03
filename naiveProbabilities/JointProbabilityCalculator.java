@@ -159,6 +159,7 @@ public class JointProbabilityCalculator {
         // Marginal for T
         double t = 0.0;
         for(int i = 0; i < assignment_table.length; i++){
+            // T is the 0th variable entry
             if(assignment_table[i][0] == 1){
                 t += joint_probabilities[i];
             }
