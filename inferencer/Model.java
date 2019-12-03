@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author Hannah Lewerentz <hlewerentz@uos.de>
  */
-public class Model {
+class Model {
 
     /**
      * Attack factor specification (default = weak)
@@ -40,7 +40,6 @@ public class Model {
      * The variables, i.e. the arguments, used in the BAF
      */
     private Variable[] vars;
-    long times_sum = 0;
 
     /**
      * Opens a JFileChooser to pick a .txt file
@@ -158,7 +157,6 @@ public class Model {
             // Skip Supports and Attacks for now
             if(line.equals("") || isComment(line) || isSupLine(line) || isAttLine(line)){
                 lineCount++;
-                continue;
             }
 
             else if(isArgLine(line)){
@@ -192,7 +190,6 @@ public class Model {
             // Empty lines and comments allowed
             if(line.equals("") || isComment(line) || isArgLine(line)){
                 lineCount++;
-                continue;
             }
 
             // ATT
@@ -291,18 +288,14 @@ public class Model {
             inf = new JunctionTreeInferencer();
         }
         if(inferencer.equals("gibbsSampler")){
-            inf = new SamplingInferencer(new GibbsSampler(10000), 50000);
+//            int samples = vars.length*200;
+//            int burnin = samples/5;
+            inf = new SamplingInferencer(new GibbsSampler(1000), 5000);
         }
 
         // TIME THIS
-        long startTime = System.currentTimeMillis();
 
         inf.computeMarginals(fg);
-
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        times_sum += elapsedTime;
-        System.out.println("Inference time: " + elapsedTime + " ms");
 
         // Collect marginals
         for(Variable var : vars){

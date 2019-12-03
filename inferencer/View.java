@@ -8,7 +8,7 @@ import java.awt.*;
  *
  * @author Hannah Lewerentz <hlewerentz@uos.de>
  */
-public class View extends JFrame {
+class View extends JFrame {
 
     /**
      * The JMenuItem for File -> New
@@ -147,7 +147,7 @@ public class View extends JFrame {
     /**
      * Constructor; initializes the view
      */
-    public View(){
+    View(){
 
         // inferencer.Main Frame
         this.setTitle("BAF Inferencer Application");
@@ -254,7 +254,7 @@ public class View extends JFrame {
         menuBar.add(factorsMenu);
 
         // Inferencer Menu and submenus
-        JMenu infMenu = new JMenu("inferencer");
+        JMenu infMenu = new JMenu("Inferencer");
         infMenu.setFont(myFont);
 
         junctionTree = new JRadioButtonMenuItem("Junction Tree", true);

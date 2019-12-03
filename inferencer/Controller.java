@@ -179,21 +179,10 @@ public class Controller implements ActionListener {
                     view.setResultText(e.getMessage());
                 }
             }
-            if(counter < 100){
-                counter++;
-                view.inferenceButton.doClick();
-            }
-            System.out.println("Average runtime over 100 inferencer calls: " + model.times_sum/100 + "ms");
         }
 
         if(ae.getSource() == view.itemShowHelp){
             view.showHelp();
-            // This could have been a zoom function if only I was smart enough
-//            List<Component> cl = getAllComponents(view);
-//            for(Component c : cl){
-//                int size = c.getFont().getSize();
-//                c.setFont(new Font("DialogInput", Font.PLAIN, size+10));
-//            }
         }
 
         if(ae.getSource() == view.setFactorsStrong){
