@@ -1,109 +1,85 @@
 package modelGenerator;
 
-import java.io.*;
 import java.util.*;
 
+/**
+ * Class generating a polytree (acyclic tree) graph model
+ * of a Bipolar Argumentation Framework in a .txt format
+ * which can be uploaded in the BAF-Inferencer application.
+ *
+ * @author Hannah Lewerentz <hlewerentz@uos.de>
+ */
 public class PolyTreeModel {
+    /**
+     * The available relations in the BAF
+     */
     private static String[] relations = {"attack(", "support("};
-    private static String[] arguments;
+    /**
+     * The number of nodes, i.e. arguments, in the argumentation graph
+     */
     private static int num_args;
-    private static int num_relations;
-    private String density;
-    private static boolean[][] adj;
 
-    PolyTreeModel(int nodes, String den){
+    // Ctor
+    PolyTreeModel(int nodes){
         num_args = nodes;
-        density = den;
-        if(den.equals("dense")){
-            // 80% density, since no cycles up to n-1
-            num_relations = (int)(num_args*0.8);
-        }
-        else if (den.equals("sparse")){
-            num_relations = num_args/2;
-        }
-        adj = new boolean[num_args][num_args];
     }
 
-    private boolean recursiveCyclic(int current_node, int last_node, boolean visited[]){
-        visited[current_node] = true;
-        for(int i = 0; i < num_args; i++){
-            if(i != last_node && adj[current_node][i]){
-                if(recursiveCyclic(i, current_node, visited)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    /**
+     * Generates the model string of the given model.
+     * Iteratively picks new nodes and connecting them
+     * to already connected nodes, thus generating a tree.
+     *
+     * @return String generated model
+     */
+    String generateModel(){
 
-    private boolean isCyclic(int start_node){
-        boolean[] visited = new boolean[num_args];
-        return recursiveCyclic(start_node, -1, visited);
-    }
-
-    private static void writeToFile(String text, String filename){
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("/home/hannahlewerentz/Schreibtisch/Thesis/"+ filename +".txt")))) {
-            writer.write(text);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    private String generateNewRel(){
-
-        Random r = new Random();
-        int i = r.nextInt(num_args);
-        int j = r.nextInt(num_args);
-
-        String a1 = arguments[i];
-        String a2 = arguments[j];
-
-        while(a1.equals(a2)){
-            j = r.nextInt(num_args);
-            a2 = arguments[j];
-        }
-
-        adj[i][j] = adj[j][i] = true;
-
-        // CYCLE CHECK
-        if(isCyclic(i)){
-            adj[i][j] = adj[j][i] = false;
-            return generateNewRel();
-        }
-        else {
-            return relations[r.nextInt(2)] +
-                    a1 + "," + a2 + ")\n";
-        }
-    }
-
-    void generateModel(){
-
+        // Arg-line
         String model = "args{";
-        arguments = new String[num_args];
-
-        // Generate arguments
+        String[] arguments = new String[num_args];
         for(int i = 0; i < num_args; i++){
             arguments[i] = "A" + i;
             model += "A" + i;
-
             if(i != num_args-1) model += ",";
             else model += "}\n";
         }
 
         // Generate random relations
-        List<String> curr_rels = new ArrayList<String>();
+        List<String> nodes = new ArrayList<>(Arrays.asList(arguments));
+        List<String> picked = new ArrayList<>();
 
-        for(int i = 0; i < num_relations; i++){
-            String new_rel = generateNewRel();
-            while(curr_rels.contains(new_rel)){
-                new_rel = generateNewRel();
+        // Up to n-1, to ensure acyclicity and connectedness
+        for(int i = 0; i < num_args-1; i++){
+            Random r = new Random();
+            String rel = relations[r.nextInt(2)];
+            String a1 = "";
+            String a2 = "";
+
+            // Root node case
+            if(picked.isEmpty()){
+                a1 = nodes.get(r.nextInt(nodes.size()));
+                a2 = nodes.get(r.nextInt(nodes.size()));
+                while(a2.equals(a1)){
+                    a2 = nodes.get(r.nextInt(nodes.size()));
+                }
+                picked.add(a1);
+                picked.add(a2);
+                nodes.remove(a1);
+                nodes.remove(a2);
             }
-            curr_rels.add(new_rel);
-            model += new_rel;
-        }
 
-        writeToFile(model, num_args + "args_" + density);
-        // fdf df
+            else {
+                // From picked...
+                a1 = picked.get(r.nextInt(picked.size()));
+                // Connect to a new node!
+                a2 = nodes.get(r.nextInt(nodes.size()));
+                // They can (and should) not be the same
+                // - no check necessary
+                picked.add(a2);
+                nodes.remove(a2);
+            }
+
+            model += rel + a1 + "," + a2 + ")\n";
+        }
+        return model;
     }
 }
