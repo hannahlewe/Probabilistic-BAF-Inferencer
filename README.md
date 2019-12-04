@@ -12,6 +12,7 @@ git clone https://github.com/hannahlewe/Probabilistic-BAF-Inferencer.git
 ```
 
 2) Use the BAFInferencer application by navigating to its location and executing the BAFInferencer.jar
+(Manual included in the GUI under Tab "Help")
 
 ```
 java -jar BAFInferencer.jar
