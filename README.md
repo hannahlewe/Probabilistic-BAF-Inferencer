@@ -1,4 +1,4 @@
-
+![LOGO](/home/hannahlewerentz/Schreibtisch/info.png?raw=true "Title")
 
 # Probabilistic-BAF-Inferencer
 
